@@ -46,7 +46,7 @@ public class UnifyManager {
 		TimeLine timeLine =new TimeLine(user);
 		try {
 			JSONObject rawData=getRawData();
-			System.out.println(rawData.toString(1));
+			//System.out.println(rawData.toString(1));
 			List<Conversation> twitterDirectConversation=constructTwitterDirectConversation(rawData);
 			
 			List<Conversation> twitterStatusConversation=constructTwitterStatusConversation(rawData);

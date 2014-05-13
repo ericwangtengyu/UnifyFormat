@@ -111,5 +111,17 @@ public class User {
 		this.name = name;
 	}
 	
+	public void setFacebookID(String facebookID){
+		this.facebookID=facebookID;
+	}
+	
+	public void setTwitterID(String twitterID){
+		this.tweetID=twitterID;
+	}
+	
+	public void setPhoneNum(String phoneNum){
+		this.phoneNum=phoneNum;
+	}
+	
 	
 }

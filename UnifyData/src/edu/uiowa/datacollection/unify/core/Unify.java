@@ -33,7 +33,7 @@ public class Unify {
 			JSONArray jsonArray=jsonHelper.readJsonFromUrl(ConstantValues.GET_ALL_USER_URL);
 			for(int i=0;i<jsonArray.length();i++){
 				JSONObject obj=jsonArray.getJSONObject(i);
-				System.out.println(obj);
+				//System.out.println(obj.toString(1));
 				userList.add(createUser(obj));
 			}
 		} catch (JSONException e) {
@@ -44,6 +44,9 @@ public class Unify {
 	
 	public static User createUser(JSONObject obj) throws JSONException{
 		User u=new User(obj.getString("pk"),0);
+		JSONObject fields=obj.getJSONObject("fields");
+		u.setFacebookID(fields.getString("facebook_appid")); //TODO: add the real facebook id
+		u.setTwitterID(fields.getString("twitter_id"));
 		return u;
 	}
 
