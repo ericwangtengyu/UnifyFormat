@@ -1,10 +1,8 @@
 package edu.uiowa.datacollection.unify.core;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,9 +25,9 @@ public class Unify {
 	 */
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Please specify the startDate:");
+		System.out.println("Please specify the startDate(yyyy-mm-dd):");
 		String str1 = br.readLine().trim();
-		System.out.println("Please specify the endDate:");
+		System.out.println("Please specify the endDate(yyyy-mm-dd):");
 		String str2 = br.readLine().trim();
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd",
