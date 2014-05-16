@@ -1,6 +1,10 @@
 package edu.uiowa.datacollection.unify.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,9 +39,9 @@ public class UnifyManager {
 	public JSONObject getRawData() throws JSONException, IOException{
 		JSONObject obj=new JSONObject();
 		obj.put("phoneNum", user.getPhoneNum());
-		startDate=new Date(1000000000);
+		//startDate=new Date(1000000000);
 		obj.put("startDate",startDate.getTime() );
-		endDate=new Date();
+		//endDate=new Date();
 		obj.put("endDate", endDate.getTime());
 		return jsonHelper.postJsonData(ConstantValues.COLLECT_URL, obj);
 	}
@@ -429,5 +433,47 @@ public class UnifyManager {
 
 	public void setTimeLine(TimeLine timeLine) {
 		this.timeLine = timeLine;
+	}
+	
+	public void setStartDate(Date startDate){
+		this.startDate=startDate;
+	}
+	
+	public void setEndDate(Date endDate){
+		this.endDate=endDate;
+	}
+	
+	public void saveJsonData(String filename,JSONObject data)
+	{
+		try {
+			System.out.println(data.toString(1));
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
+		File file = new File(filename);
+
+		try
+		{
+			FileOutputStream f = new FileOutputStream(file);
+			PrintWriter pw = new PrintWriter(f);
+
+			pw.append(data.toString(1) + "\n");
+
+			pw.flush();
+			pw.close();
+			f.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			System.out.println(e);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }

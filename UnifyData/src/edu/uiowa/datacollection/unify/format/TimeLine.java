@@ -63,15 +63,6 @@ public class TimeLine {
 		this.endDate = endDate;
 	}
 	
-	public boolean storeAs(String format){
-		try {
-			System.out.println(this.toJSONObject().toString(1));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-	
 	public JSONObject toJSONObject() throws JSONException{
 		JSONObject timeLine=new JSONObject();
 		timeLine.put("User", user.toString());

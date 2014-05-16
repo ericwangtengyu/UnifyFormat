@@ -1,7 +1,15 @@
 package edu.uiowa.datacollection.unify.core;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import edu.uiowa.datacollection.unify.format.TimeLine;
 import edu.uiowa.datacollection.unify.format.User;
@@ -15,15 +23,29 @@ public class Unify {
 
 	/**
 	 * @param args
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
-		List<User> userList=getUserList();
-		for(User u:userList){
-			UnifyManager um=new UnifyManager(u);
-			TimeLine t=um.constructTimeLine();
-			t.storeAs("JSON");
-		}
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Please specify the startDate:");
+		String str1 = br.readLine().trim();
+		System.out.println("Please specify the endDate:");
+		String str2 = br.readLine().trim();
 		
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd",
+				Locale.ENGLISH);
+
+		Date startDate = df.parse(str1);
+		Date endDate=df.parse(str2);
+		List<User> userList = getUserList();
+		for (User u : userList) {
+			UnifyManager um = new UnifyManager(u);
+			um.setStartDate(startDate);
+			um.setEndDate(endDate);
+			TimeLine t = um.constructTimeLine();
+			um.saveJsonData(u.getPhoneNum(), t.toJSONObject());
+		}
+
 	}
 	
 	public static List<User> getUserList(){
