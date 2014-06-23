@@ -100,9 +100,12 @@ public class Message implements Comparable<Message>{
 		msg.put("mID", mID);
 		if(sender!=null)
 			msg.put("sender", sender.toString());
-		msg.put("recipients", recipients.toString());
-		msg.put("body", body);
-		msg.put("type", type.toString());
+		if(recipients!=null)
+			msg.put("recipients", recipients.toString());
+		if(body!=null)
+			msg.put("body", body);
+		if(type!=null)
+			msg.put("type", type.toString());
 		if(createTime!=null)
 			msg.put("createTime", createTime.toString());
 		return msg;

@@ -91,16 +91,23 @@ public class UnifyManager {
 			c.setcID(obj.getString("pk"));
 			c.setCreateTime(new Date(fields.getLong("startTime")));
 			c.setUpdateTime(new Date(fields.getLong("endTime")));
-			c.setType(Type.twitterMsg);
+
+			// inStudy;
 			for(int j=0;j<users.length();j++){
 				String num=users.getString(j);
+				//inStudy=false;
 				for(User u:userList){
 					if(u.getPhoneNum()==num)
 					{
+						//inStudy=true;
 						c.addParticipant(u);
 						break;
 					}
 				}
+				
+				/*if(!inStudy){
+					c.addParticipant(new User(num,3)); // 3 stands for the NOT_IN_STUDY user.
+				}*/
 			}
 			tConversList.add(c);
 		}
@@ -155,13 +162,17 @@ public class UnifyManager {
 				for(User u:userList){
 					if(u.getPhoneNum().equals(fields.getString("author"))){
 						m.setSender(u);
+						break;
 					}
 				}
 			}
 			JSONArray mentionor=fields.getJSONArray("mentionor");
+			List<User> recipients=new ArrayList<User>();
 			for(int k=0;k<mentionor.length();k++){
-				
+				recipients.add(new User(mentionor.getString(k),3));
 			}
+			m.setRecipients(recipients);
+			
 			statusList.add(m);
 		}
 		Collections.sort(statusList);

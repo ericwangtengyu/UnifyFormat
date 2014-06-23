@@ -4,6 +4,7 @@ public class User {
 	public static final int PHONE_NUMBER_TYPE = 0;
 	public static final int FACEBOOK_TYPE = 1;
 	public static final int TWITTER_TYPE = 2;
+	public static final int NOT_IN_STUDY = 3;
 
 	/**
 	 * The User's unique Facebook ID
@@ -27,6 +28,7 @@ public class User {
 		this.tweetID = tid;
 		this.phoneNum = pnum;
 	}
+	
 
 	public User(String id, int type) {
 		if (type == PHONE_NUMBER_TYPE) {
@@ -35,7 +37,9 @@ public class User {
 			this.facebookID = id;
 		} else if (type == TWITTER_TYPE) {
 			this.tweetID = id;
-		} else {
+		} else if (type == NOT_IN_STUDY){
+			this.phoneNum=id;
+		}else {
 			throw new IllegalArgumentException("Invalid User data type");
 		}
 	}
