@@ -52,12 +52,13 @@ public class Unify {
 		List<User> userList = getUserList();
 		for (User u : userList) {
 			UnifyManager um = new UnifyManager(u);
+			um.setUserList(userList);
 			um.setStartDate(startDate);
 			um.setEndDate(endDate);
 			TimeLine t = um.constructTimeLine();
 			StringBuilder sb=new StringBuilder();
 			String []t1 = startDate.toGMTString().split(" ");
-			String []t2 = startDate.toGMTString().split(" ");
+			String []t2 = endDate.toGMTString().split(" ");
 			sb.append(u.getPhoneNum()).append("_").append(t1[0]).append(t1[1]).append(t1[2]).append("_").append(t2[0]).append(t2[1]).append(t2[2]);
 			um.saveJsonData(sb.toString(), t.toJSONObject());
 			System.out.println("Data for user "+u.getPhoneNum()+" has been saved");

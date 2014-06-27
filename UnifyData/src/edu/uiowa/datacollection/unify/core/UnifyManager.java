@@ -5,11 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import edu.uiowa.datacollection.unify.format.Conversation;
 import edu.uiowa.datacollection.unify.format.Message;
@@ -31,7 +34,7 @@ public class UnifyManager {
 	private Date endDate;
 	
 	public UnifyManager(User u){
-		userList=Unify.getUserList();
+		//userList=Unify.getUserList();
 		this.setUser(u);
 		jsonHelper=new JsonHelper();
 	}
@@ -145,8 +148,9 @@ public class UnifyManager {
 	 * @param statusList
 	 * @return
 	 * @throws JSONException 
+	 * @throws ParseException 
 	 */
-	public List<Conversation> constructTwitterStatusConversation(JSONObject rawData) throws JSONException{
+	public List<Conversation> constructTwitterStatusConversation(JSONObject rawData) throws JSONException, ParseException{
 		JSONArray twitterStatus=rawData.getJSONArray("twitterStatus");
 		List<Message> statusList=new ArrayList<Message>();
 		for(int i=0;i<twitterStatus.length();i++){
@@ -155,7 +159,11 @@ public class UnifyManager {
 			Message m=new Message();
 			m.setmID(obj.getString("pk"));
 			m.setType(Type.twitterStatus);
-			m.setCreateTime(new Date(fields.getLong("created_time")));
+			String createTime=fields.getString("created_time");
+			createTime=createTime.replace('T', ' ').substring(0,createTime.length()-1);
+			Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(createTime);
+			System.out.println(date);
+			m.setCreateTime(date);
 			m.setBody(fields.getString("body")); 
 			m.setInReplyToMessageID(fields.getString("inReplyToStatusID"));
 			if(!fields.optString("author").equals("null")){
@@ -231,8 +239,9 @@ public class UnifyManager {
 	 * @param rawData
 	 * @return
 	 * @throws JSONException
+	 * @throws ParseException 
 	 */
-	public List<Conversation> constructFacebookDirectConversation(JSONObject rawData) throws JSONException{
+	public List<Conversation> constructFacebookDirectConversation(JSONObject rawData) throws JSONException, ParseException{
 		JSONArray facebookDirectConversation=rawData.getJSONArray("facebookDirectConversation");
 		List<Conversation> fdirectConversList=new ArrayList<Conversation>();
 		for(int i=0;i<facebookDirectConversation.length();i++){
@@ -241,8 +250,9 @@ public class UnifyManager {
 			JSONArray users=fields.getJSONArray("user");
 			Conversation c=new Conversation(Type.facebookmsg);
 			c.setcID(obj.getString("pk"));
-
-			c.setUpdateTime(new Date(fields.getLong("updated_time")));
+			Long updateTime=fields.getLong("updated_time");
+			Date date = new Date(updateTime);
+			c.setUpdateTime(date);
 			for(int j=0;j<users.length();j++){
 				String num=users.getString(j);
 				for(User u:userList){
@@ -262,8 +272,11 @@ public class UnifyManager {
 			Message m=new Message();
 			m.setType(Type.facebookmsg);
 			m.setBody(fields.getString("body"));
-			m.setCreateTime(new Date(fields.getLong("created_time")));
-			m.setmID(fields.getString("author_id")+fields.getString("created_time"));
+			String createTime=fields.getString("created_time");
+			createTime=createTime.replace('T', ' ').substring(0,createTime.length()-1);
+			Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(createTime);
+			m.setCreateTime(date);
+			m.setmID(fields.getString("author_id")+"_"+date.getTime());
 			for(int j=0;j<fdirectConversList.size();j++){
 				Conversation C=fdirectConversList.get(j);
 				if(fields.getString("conversation").equals(C.getcID())){
@@ -290,8 +303,9 @@ public class UnifyManager {
 	 * @param commentMsg
 	 * @return
 	 * @throws JSONException 
+	 * @throws ParseException 
 	 */
-	public List<Conversation> constructFacebookActivityConversation(JSONObject rawData) throws JSONException{
+	public List<Conversation> constructFacebookActivityConversation(JSONObject rawData) throws JSONException, ParseException{
 		JSONArray facebookActivity=rawData.getJSONArray("facebookActivity");
 		List<Message> facebookActivityMsg=new ArrayList<Message>();
 		for(int i=0;i<facebookActivity.length();i++){
@@ -306,7 +320,10 @@ public class UnifyManager {
 			{
 				m.setBody(fields.getString("descirption"));
 			}
-			m.setCreateTime(new Date(fields.getLong("updated_time")));
+			String updateTime=fields.getString("updated_time");
+			updateTime=updateTime.replace('T', ' ').substring(0,updateTime.length()-1);
+			Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(updateTime);
+			m.setCreateTime(date);
 			boolean existInStudy=false;
 			for(User u:userList){
 				if(fields.getString("actor_id").equals(u.getFacebookId())){
@@ -365,7 +382,7 @@ public class UnifyManager {
 		return facebookActivityConversation;
 	}
 	
-	public List<Conversation> constructSMSConversation(JSONObject rawData) throws JSONException{
+	public List<Conversation> constructSMSConversation(JSONObject rawData) throws JSONException, ParseException{
 		JSONArray smsConversation=rawData.getJSONArray("SMSConversation");
 		List<Conversation> smsConversationList=new ArrayList<Conversation>();
 		for(int i=0;i<smsConversation.length();i++){
@@ -373,6 +390,10 @@ public class UnifyManager {
 			JSONObject fields=obj.getJSONObject("fields");
 			Conversation c=new Conversation(Type.smsMsg);
 			c.setcID(obj.getString("pk"));
+			/*String updateTime=fields.getString("updated_time");
+			updateTime=updateTime.replace('T', ' ').substring(0,updateTime.length()-1);
+			Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(updateTime);
+			c.setUpdateTime(date);*/
 			c.setUpdateTime(new Date(fields.getLong("last_updated")));
 			String participantStr=fields.getString("participants");
 			participantStr=participantStr.substring(1,participantStr.length()-1);
@@ -397,8 +418,11 @@ public class UnifyManager {
 			JSONObject fields=obj.getJSONObject("fields");
 			Message m=new Message();
 			m.setType(Type.smsMsg);
-			m.setBody(fields.getString("body"));
-			m.setCreateTime(new Date(fields.getLong("created_time")));
+			m.setBody(fields.getString("SmSbody"));
+			String createTime=fields.getString("created_time");
+			createTime=createTime.replace('T', ' ').substring(0,createTime.length()-1);
+			Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH).parse(createTime);
+			m.setCreateTime(date);
 			String recipientStr=fields.getString("recipient");
 			recipientStr=recipientStr.substring(1,recipientStr.length()-1);
 			String []recipients=recipientStr.split(",");
@@ -486,5 +510,9 @@ public class UnifyManager {
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void setUserList(List<User> userList){
+		this.userList=userList;
 	}
 }
